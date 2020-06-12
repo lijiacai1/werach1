@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天气</title>
+  <link rel="stylesheet" href="./css/reset.min.css" />
+  <link rel="stylesheet" href="./css/index.min.css" />
+</head>
+<body>
+  
+  <div class="weather-box">
+
+    <!-- 系统导航 -->
+    <div class="system"></div>
+
+    <!-- 搜索 -->
+    <div class="search clearfix">
+      <div class="fl location">
+        <div class="fl location-text" name="maploct">北京市</div>
+        <div class="fl location-icon"></div>
+      </div>
+      <div class="fl search-box">
+        <input class="search-ipt fl" type="text" />
+        <span class="search-icon fl"></span>
+      </div>
+    </div>
+
+    <div class="tempData">
+        <div class="temp">
+            无
+        </div>
+        <div class="forecast">
+           <span class="fl flData" id="clear">无</span>
+           <span class="fr frData" id="minMax">无</span>
+        </div>
+    </div>
+
+    <div class="seletWind">
+       <ul class="clearfix">
+         <li class="fl">
+            <div class="WindDu1" id="wind_sc">无</div>
+            <div class="WindDu2" id="wind_dir">无</div>
+         </li>
+         <li class="fl WindLine">
+           <div class="WindDu1">16</div>
+            <div class="WindDu2">可见度</div>
+         </li>
+         <li class="fl WindLine">
+            <div class="WindDu1" id="hum">无</div>
+            <div class="WindDu2">湿度</div>
+         </li>
+       </ul>
+      
+       <div class="condition">
+           未来两小时无降雨
+       </div>
+    </div>
+
+    <div class="DayBy">
+         <div class="DayBy_Day fl">
+             <span class="underline1" data-day="daily_forecast">逐日预报</span>
+         </div>
+         <div class="DayBy_Hour fr">
+            <span  data-day="hourly">逐时预报</span>
+            
+         </div>
+         <i></i>
+    </div>
+
+    <div class="wh">
+            
+         <div class="wearherShows">
+            <!-- <div class="wearherShows_list">
+               <ul>
+                  <li>
+                     <div class="wearherShows_list_1">
+                        
+                     </div>
+                     <div  class="wearherShows_list_2">
+                        
+                     </div>
+                  </li>
+                  <li>
+                     <span class="ico"></span>
+                  </li>
+                  <li class="readMin_max"></li>
+               </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div>
+            <div class="wearherShows_list">
+            <ul>
+               <li>
+                  <div class="wearherShows_list_1">
+                     
+                  </div>
+                  <div  class="wearherShows_list_2">
+                     
+                  </div>
+               </li>
+               <li>
+                  <span class="ico"></span>
+               </li>
+               <li class="readMin_max"></li>
+            </ul>
+            </div> -->
+         </div>
+
+    </div>
+  </div>
+
+  <script src="./js/rem.js"></script>
+  <script src="./js/jquery-3.5.1.min.js"></script>
+  <script>
+     let DayBy=document.querySelectorAll(".DayBy span");
+     let DayByi=document.querySelector(".DayBy i");
+     let HTMLElemt=document.querySelector("html");
+     let maploctElement=document.getElementsByName("maploct");
+// console.log(DayBy);
+     let cityAjax=[];
+     let mapLocation=null;
+     let listWeat=$(".wearherShows");
+
+     //ajax请求
+
+     function map1(){
+        $.ajax({
+           type: "get",
+           url: "https://apis.map.qq.com/ws/location/v1/ip",
+           data: {
+            key: "2RBBZ-HMEL3-MDA3L-3UZHI-OBJ5J-EVFOM",
+            output: "jsonp"
+           },
+           //降妖数据类型
+           dataType: "jsonp",
+           success: function (result){
+              console.log(result);
+              mapLocation=result.result.ad_info.city;
+              weather1(mapLocation);
+            //   weather2(mapLocation);
+              maploctElement[0].innerText=mapLocation;
+           },
+           err: function (err){
+              console.log(err);
+           }
+        });
+        
+     }
+     map1();
+
+     
+   //   console.log(mapLocation);
+   //   console.log(mapLocation);
+   // weather1("钦州市")
+    
+     function weather1(city){ 
+
+            if (city == '') {
+            console.log('暂无天气数据');
+            return;
+         }
+
+        $.ajax({
+           type: "get", 
+           url: `https://api.heweather.net/s6/weather`,///forecast
+            data: {
+             location: city,
+             Key: "fa8e29f32f1143d382c48cee83c0ed19"
+             
+           },
+           success: function (result1){
+                //城市不存在
+               if (result1.HeWeather6[0].status == 'unknown location') {
+                  console.log('不存在该城市天气');
+                  return;
+               }
+              console.log(111111111111111);
+              cityAjax.push(result1);
+              initialData1(result1);
+           },
+           err: function (err){
+              console.log(err);
+           }
+        });
+     }
+
+   
+
+
+     //动态数据1 逐日和逐时
+     function initialData1(result1,type){
+            listWeat.html("");
+            let Ht=result1.HeWeather6[0];
+              console.log(Ht.daily_forecast);
+              let HD=Ht.daily_forecast[0];
+              let tep=HD.tmp_min;
+              let ttData= HD.cond_txt_d;
+              let tmpMin=HD.tmp_min+"°";
+              let tmpMax=HD.tmp_max+"°";
+            //   console.log(result1);
+              $(".temp").text(tep+"°");
+              $("#clear").text(ttData);
+              $("#minMax").text(tmpMin+"~"+tmpMax);//hum
+              $("#wind_dir").text(HD.wind_dir);
+              $("#wind_sc").text(HD.wind_sc);
+              $("#hum").text(HD.hum+"%");
+
+             
+            //   console.log(listweat);
+
+              for(let i=0;i<Ht.daily_forecast.length;i++){
+
+                 let updata=null;
+                 let stringData=null;
+                 let UpCondData=null;
+                 let uptmpMin=null;
+                 let uptmpMax=null;
+               //   let condCodeD=null;
+                 let CdCodeD=null;
+                 let str="";
+
+                 if(type=="hourly"){
+                     updata=Ht.hourly[i].time;
+                     stringData=updata.split(" ")[1];//cond_txt
+                     UpCondData=Ht.hourly[i].cond_txt;
+                     CdCodeD=Ht.hourly[i].cond_code;
+
+                     // uptmpMin=Ht.hourly[i].tmp_min+"°";
+                     // uptmpMax=Ht.hourly[i].tmp_max+"°";
+                     // condCodeD=Ht.hourly[i].cond_code_d;
+                        str=`<div class="wearherShows_list">
+                        <ul>
+                           <li>
+                              <div class="wearherShows_list_1">
+                                 ${stringData}
+                              </div>
+                              <div  class="wearherShows_list_2">
+                                 ${UpCondData}
+                              </div>
+                           </li>
+                           <li>
+                              <span class="ico" style="background: url(./images/${CdCodeD}.png) no-repeat .05rem;"></span>
+                           </li>
+                           <li class="readMin_max">${Ht.hourly[i].tmp}°</li>
+                        </ul>
+                     </div>`;
+                 }else {
+                        updata=Ht.daily_forecast[i].date;
+                        stringData=updata.slice(5,updata.length);
+                        UpCondData=Ht.daily_forecast[i].cond_txt_d;
+                        CdCodeD=Ht.daily_forecast[i].cond_code_d;
+                        uptmpMin=Ht.daily_forecast[i].tmp_min+"°";
+                        uptmpMax=Ht.daily_forecast[i].tmp_max+"°";
+                        // condCodeD=Ht.daily_forecast[i].cond_code_d;
+                        str=`<div class="wearherShows_list">
+                        <ul>
+                           <li>
+                              <div class="wearherShows_list_1">
+                                 ${stringData}
+                              </div>
+                              <div  class="wearherShows_list_2">
+                                 ${UpCondData}
+                              </div>
+                           </li>
+                           <li>
+                              <span class="ico" style="background: url(./images/${CdCodeD}.png) no-repeat .05rem;"></span>
+                           </li>
+                           <li class="readMin_max">${uptmpMin}~${uptmpMax}</li>
+                        </ul>
+                     </div>`;
+                 }
+                
+             
+               listWeat.append(str);
+              }
+     }
+
+     //动态数据2 逐时
+   //   function initialData2(result2){
+   //    console.log(cityAjax);
+   //            let Ht=result1.HeWeather6[0];
+   //            console.log(Ht.daily_forecast);
+   //            let HD=Ht.daily_forecast[0];
+   //            let tep=HD.tmp_min;
+   //            let ttData= HD.cond_txt_d;
+   //            let tmpMin=HD.tmp_min+"°";
+   //            let tmpMax=HD.tmp_max+"°";
+   //          //   console.log(result1);
+   //            $(".temp").text(tep+"°");
+   //            $("#clear").text(ttData);
+   //            $("#minMax").text(tmpMin+"~"+tmpMax);//hum
+   //            $("#wind_dir").text(HD.wind_dir);
+   //            $("#wind_sc").text(HD.wind_sc);
+   //            $("#hum").text(HD.hum+"%");
+
+   //          //   let listWeat=$(".wearherShows");
+   //          //   console.log(listweat);
+
+   //            for(let i=0;i<Ht.daily_forecast.length;i++){
+
+   //               let updata=Ht.daily_forecast[i].date;
+   //               let stringData=updata.slice(5,updata.length);
+   //               let UpCondData=Ht.daily_forecast[i].cond_txt_d;
+   //               let uptmpMin=Ht.daily_forecast[i].tmp_min+"°";
+   //               let uptmpMax=Ht.daily_forecast[i].tmp_max+"°";
+   //               let condCodeD=Ht.daily_forecast[i].cond_code_d;
+   //             //   let indexElement=listWeat.eq(i);
+   //               let CdCodeD=Ht.daily_forecast[i].cond_code_d;
+   //               let str=`<div class="wearherShows_list">
+   //             <ul>
+   //                <li>
+   //                   <div class="wearherShows_list_1">
+   //                      ${stringData}
+   //                   </div>
+   //                   <div  class="wearherShows_list_2">
+   //                      ${UpCondData}
+   //                   </div>
+   //                </li>
+   //                <li>
+   //                   <span class="ico" style="background: url(./images/${condCodeD}.png) no-repeat .05rem;"></span>
+   //                </li>
+   //                <li class="readMin_max">${uptmpMin}~${uptmpMax}</li>
+   //             </ul>
+   //          </div>`;
+             
+   //             listWeat.append(str);
+   //    }
+   //   }
+     
+     $(".search-icon").on("click",()=>{
+      let inpcity=$(".search-ipt").val();
+        if(inpcity != "" && inpcity != "undefind"){
+           
+         weather1(inpcity);
+         // weather2(inpcity);
+         maploctElement[0].innerText=inpcity;
+        }else{
+           console.log('暂无天气数据');
+        }
+     })
+
+         DayBy[0].onclick=()=>{
+            let fontSize = parseFloat(window.getComputedStyle(HTMLElemt).fontSize);
+            let clickon=DayBy[0].offsetWidth;
+            var distance = clickon / fontSize;
+            
+            DayByi.style.left=0*distance+0.2+"rem";
+            DayByi.style.transition ="all 1s";
+            // DayBy[0].classList.add("underline1");
+            // DayBy[1].classList.remove("underline1");
+
+            type=DayBy[0].getAttribute("data-day");
+            initialData1(cityAjax[0],type);
+            
+         }
+       
+         DayBy[1].onclick=()=>{
+            // DayBy[1].classList.add("underline1");
+            // DayBy[0].classList.remove("underline1");
+            let fontSize = parseFloat(window.getComputedStyle(HTMLElemt).fontSize);
+            let clickon=DayBy[0].offsetWidth;
+            console.log(fontSize)
+            var distance = clickon / fontSize;
+            DayByi.style.left=1*distance+0.4+"rem";
+            DayByi.style.transition ="all 1s";
+            type=DayBy[1].getAttribute("data-day");
+
+            initialData1(cityAjax[0],type);
+           
+         }
+      
+  </script>
+
+
+  
+</body>
+</html>
